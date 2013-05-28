@@ -96,16 +96,5 @@ namespace Satel
 
         }
 
-
-
-        public void test()
-        {
-         //   var a =checksum(new byte[]{0xe0, 0x12,0x34,0xff,0xff});
-            var b = Communication.sendCommand(new byte[] { 0x7E });
-        }
-
-
-
-
     }
 }

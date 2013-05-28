@@ -13,7 +13,7 @@ namespace IntegraTest
             Satel.Integra i = new Satel.Integra("xxxxxxxx",7094);
 
             //i.test();
-            //Console.WriteLine(i.getVersion());
+            Console.WriteLine(i.getVersion());
             i.readPartitions();
             i.readZones();
             i.readOutputs();
