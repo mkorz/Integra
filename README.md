@@ -1,11 +1,14 @@
 Integra
 =======
 
-Basic class  to access Satel Integra via Ethm-1 module.
+Basic class to access Satel Integra via Ethm-1 module.
+
+Developed with Visual Studio Express 2012 for Windows Desktop.
 
 
+Disclaimer and legal boring stuff
+-----------
 
-Disclaimer:
 I am not affiliated with Satel. Integra and all other Satel product names are trademarks or registered trademarks of Satel. All other company and product names are trademarks or registeredtrade marks of their respective companies.
 
 This program is free software: you can redistribute it and/or modify
