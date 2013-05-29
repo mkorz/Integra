@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Satel
 {    
@@ -11,7 +8,8 @@ namespace Satel
         public Dictionary<byte,Partition> partition { get; private set; }
         public Dictionary<byte, Zone> zone{ get; private set; }
         public Dictionary<byte, Output> output { get; private set; }
-        string hardwareModel(int code)
+
+        static string hardwareModel(int code)
         {
             switch (code)
             {
@@ -51,14 +49,21 @@ namespace Satel
 
         public string getVersion()
         {
-            string result;
-            var resp=Communication.sendCommand(0x7E);
-            result = "INTEGRA " + hardwareModel(resp[0]);
-            result += " " + (char)resp[1] + "." + (char)resp[2] + (char)resp[3] + " " + (char)resp[4] + (char)resp[5] + (char)resp[6] + (char)resp[7];
-            result+="-"+(char)resp[8]+(char)resp[9]+"-"+(char)resp[10]+(char)resp[11];            
-            result += " LANG: " + (resp[12] == 1 ? "English" : "Other");
-            result+= " SETTINGS: " + (resp[13]==0xFF? "stored": "NOT STORED") + " in flash";
-            return result;
+            try
+            {
+                var resp = Communication.sendCommand(0x7E);
+
+                var result = "INTEGRA " + hardwareModel(resp[0]);
+                result += " " + (char)resp[1] + "." + (char)resp[2] + (char)resp[3] + " " + (char)resp[4] + (char)resp[5] + (char)resp[6] + (char)resp[7];
+                result += "-" + (char)resp[8] + (char)resp[9] + "-" + (char)resp[10] + (char)resp[11];
+                result += " LANG: " + (resp[12] == 1 ? "English" : "Other");
+                result += " SETTINGS: " + (resp[13] == 0xFF ? "stored" : "NOT STORED") + " in flash";
+                return result;
+            }
+            catch
+            {
+                return "Communication failiure.";
+            }
         }
 
         public void readPartitions()
