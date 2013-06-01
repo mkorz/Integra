@@ -6,10 +6,11 @@ namespace Satel
     public class Integra
     {
         public Dictionary<byte,Partition> partition { get; private set; }
-        public Dictionary<byte, Zone> zone{ get; private set; }
+        public Dictionary<byte, Objects> zone{ get; private set; }
         public Dictionary<byte, Output> output { get; private set; }
+        public Dictionary<byte, User> users { get; private set; }
 
-        static string hardwareModel(int code)
+        string hardwareModel(int code)
         {
             switch (code)
             {
@@ -35,16 +36,52 @@ namespace Satel
 
         }
 
-               
+        //converts UserCode specified as string (1234) to format used by Integra (0x12 0x34)
+        byte[] convertUserCode(string usercode,string prefix="")
+        {
+            List<byte> result=new List<byte>();
+            var code = prefix + usercode;
 
-        public Integra(string host, int port)
+            for (var i=0;i<code.Length; i+=2)
+            {
+                var b = (byte)(Convert.ToByte(code.Substring(i,1)) << 4);
+                if (i <= (code.Length - 2))
+                    b |= Convert.ToByte(code.Substring(i + 1, 1));
+                else b |= 0x0F;
+                result.Add(b);                       
+            }
+
+            // Integra expects either 4 bytes or 8 if prefix used.
+            if (prefix == "" && result.Count < 4
+                || prefix != "" && result.Count < 8)
+                            for (var i = result.Count(); i < (prefix == "" ? 4 : 8); i++) result.Add(0xFF);
+            return result.ToArray();
+        }
+
+       
+        public void Setup(string host, int port, byte[] userCode)
         {
             Communication.integraAddress = host;
-            Communication.integraPort = port;
+            Communication.integraPort = port;            
+            Communication.userCode = userCode;
+
             partition=new Dictionary<byte,Partition>();
-            zone = new Dictionary<byte, Zone>();
+            zone = new Dictionary<byte, Objects>();
             output = new Dictionary<byte, Output>();
+            users=new Dictionary<byte,User>();
         }
+
+        //constructors
+        //public Integra(string host, int port, byte[] userCode)
+        //{
+            //Setup(host, port, userCode);
+        //}
+
+        public Integra(string host, int port, string userCode)
+        {        
+            Setup(host, port, convertUserCode(userCode));           
+        }
+
 
 
         public string getVersion()
@@ -84,7 +121,7 @@ namespace Satel
             {
                 var resp = Communication.sendCommand(0xEE, 0x5, i);
                 if (resp[3] != 0xfe)                    
-                    zone.Add(i, new Zone(partition[resp[19]],i, Encoding.UTF8.GetString(resp, 3, 16),resp[2]));
+                    zone.Add(i, new Objects(partition[resp[19]],i, Encoding.UTF8.GetString(resp, 3, 16),resp[2]));
             }
             Communication.closeConnection();
         }
@@ -98,6 +135,22 @@ namespace Satel
                     output.Add(i, new Output(i, Encoding.UTF8.GetString(resp, 3, 16),resp[2]));
             }
             Communication.closeConnection();
+
+        }
+        
+        public void readUsers()
+        {
+            //for (byte i = 1; i <= 248; i++)
+            for (byte i = 1; i<=10; i++)
+            {
+                var resp = Communication.sendAuthenticatedCommand(0xE1, i);
+                if (resp.Length != 1 && resp[0] != 0x03)
+                {
+                    users.Add(i, new User(i, resp.Skip(1).Take(4).ToArray(), resp[5], resp[6], resp[7], resp.Skip(8).Take(3).ToArray(), Encoding.UTF8.GetString(resp, 11, 16)));
+                }
+
+            }
+                
 
         }
 

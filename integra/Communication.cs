@@ -8,6 +8,9 @@ namespace Satel
     {
         static public string integraAddress { get; set; }
         static public int integraPort { get; set; }
+        static public byte[] userCode { get; set; }
+
+
 
         static private System.Net.Sockets.TcpClient _tcpClient;
         static private System.IO.Stream _stream;
@@ -37,10 +40,12 @@ namespace Satel
             _tcpClient.Close();
         }
 
-       static public byte[] sendCommand(byte[] command)
+       static public byte[] sendCommand(params byte[] command)
         {
+
             var buffer = new byte[128];
             var attempt = 0;
+            int readBytes;
             do
             {
                 attempt++;
@@ -65,27 +70,29 @@ namespace Satel
                 _stream.Write(send.ToArray(), 0, send.Count());
                 _stream.Write(new byte[] { 0xFE, 0x0D }, 0, 2);
                 var ts = DateTime.Now.Ticks;                                     
-                _stream.Read(buffer, 0, 128);
+                readBytes=_stream.Read(buffer, 0, 128);
+
                 Console.WriteLine("Response received in {0} ms.", (DateTime.Now.Ticks - ts)/10000);
             } while ((buffer[0] != buffer[1] || buffer[0] != 0xFE) && attempt<3);
-            return buffer.Skip(3).Take(buffer.Length - 4).ToArray();
+           
+           List<byte> response=new List<byte>();
+            for (var i = 3; i < readBytes - 4; i++)
+            {
+                response.Add(buffer[i]);
+                if (buffer[i] == 0xFE && buffer[i + 1] == 0xF0) i++;
+            }
+            //return buffer.Skip(3).Take(readBytes- 4).ToArray();
+            return response.ToArray();
         }
-
-       static public byte[] sendCommand(byte b1)
+     
+        static public byte[] sendAuthenticatedCommand(byte command, params byte[] arguments)
         {
-            return sendCommand(new byte[] { b1 });
+            byte[] parameters=new byte[arguments.Length+1+userCode.Length];
+            parameters[0]=command;
+            Array.Copy(userCode, 0, parameters, 1, userCode.Length);
+            Array.Copy(arguments, 0, parameters, 1 + userCode.Length, arguments.Length);
+            return sendCommand(parameters);
         }
-
-       static public byte[] sendCommand(byte b1, byte b2)
-        {
-            return sendCommand(new byte[] { b1, b2 });
-        }
-
-       static public byte[] sendCommand(byte b1, byte b2, byte b3)
-       {
-           return sendCommand(new byte[] { b1, b2,b3 });
-       }
-
 
     }
 }
