@@ -70,7 +70,7 @@ namespace Satel
                 Schedule=10
             }
 
-            public byte _type;
+            private byte _type;
             public bool changedCode { get { return (_type & 0x80)==0; } }
             public bool reusedCode { get { return (_type & 0x40) == 40; } }
             public Type type { get { return (Type)(_type & 0x0F); } set { _type |= (byte) (0x0F & (byte) value); } }

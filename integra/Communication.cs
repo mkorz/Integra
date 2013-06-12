@@ -12,7 +12,6 @@ namespace Satel
         static public byte[] userCode { get; set; }
 
 
-
         static private System.Net.Sockets.TcpClient _tcpClient;
         static private System.IO.Stream _stream;
 
@@ -76,7 +75,7 @@ namespace Satel
                 Console.WriteLine("Response received in {0} ms.", (DateTime.Now.Ticks - ts)/10000);
             } while ((buffer[0] != buffer[1] || buffer[0] != 0xFE) && attempt<3);
            
-           List<byte> response=new List<byte>();
+            var response=new List<byte>();
             for (var i = 3; i < readBytes - 4; i++)
             {
                 response.Add(buffer[i]);
@@ -88,8 +87,8 @@ namespace Satel
      
         static public byte[] sendAuthenticatedCommand(byte command, params byte[] arguments)
         {
-            byte[] parameters=new byte[arguments.Length+1+userCode.Length];
-            parameters[0]=command;
+            var parameters = new byte[arguments.Length+1+userCode.Length];
+            parameters[0] = command;
             Array.Copy(userCode, 0, parameters, 1, userCode.Length);
             Array.Copy(arguments, 0, parameters, 1 + userCode.Length, arguments.Length);
             return sendCommand(parameters);

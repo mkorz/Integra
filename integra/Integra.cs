@@ -7,7 +7,7 @@ namespace Satel
 {    
     public class Integra
     {
-        public Dictionary<byte,Partition> partition { get; private set; }
+        public Dictionary<byte, Partition> partition { get; private set; }
         public Dictionary<byte, Objects> zone{ get; private set; }
         public Dictionary<byte, Output> output { get; private set; }
         public Dictionary<byte, User> users { get; private set; }
