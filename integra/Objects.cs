@@ -101,14 +101,14 @@ namespace Satel
             public bool Tests { get { return (_permissions[1] & 0x40) == 0x40; } set { if (value) _permissions[1] |= (byte)0x30; } }
             public bool Downloading { get { return (_permissions[1] & 0x80) == 0x80; } set { if (value) _permissions[1] |= (byte)0x80; } }
 
-            public bool CanAlwaysDisarm { get { return (_permissions[3] & 0x01) == 0x01; } set { if (value) _permissions[2] |= (byte)1; } }
-            public bool VoiceMessageClearing { get { return (_permissions[3] & 0x02) == 0x02; } set { if (value) _permissions[2] |= (byte)2; } }        
-            public bool GuardX { get { return (_permissions[3] & 0x01) == 0x04; } set { if (value) _permissions[2] |= (byte)4;} }
-            public bool AccessToTemporaryBlockedPartitions { get { return (_permissions[3] & 0x08) == 0x08; } set { if (value) _permissions[2] |= (byte)8;}}
-            public bool Entering1stCode { get { return (_permissions[3] & 0x10) == 0x10; }set { if (value) _permissions[2] |= (byte)0x10; }}
-            public bool Entering2ndCode { get { return (_permissions[3] & 0x20) == 0x20; } set { if (value) _permissions[2] |= (byte)0x20;}}
-            public bool OutputsControl { get { return (_permissions[3] & 0x40) == 0x40; } set { if (value) _permissions[2] |= (byte)0x40;}}
-            public bool ClearingLatchedOutputs { get { return (_permissions[3] & 0x80) == 0x80; } set { if (value) _permissions[2] |= (byte)0x80;}}
+            public bool CanAlwaysDisarm { get { return (_permissions[2] & 0x01) == 0x01; } set { if (value) _permissions[2] |= (byte)1; } }
+            public bool VoiceMessageClearing { get { return (_permissions[2] & 0x02) == 0x02; } set { if (value) _permissions[2] |= (byte)2; } }        
+            public bool GuardX { get { return (_permissions[2] & 0x01) == 0x04; } set { if (value) _permissions[2] |= (byte)4;} }
+            public bool AccessToTemporaryBlockedPartitions { get { return (_permissions[2] & 0x08) == 0x08; } set { if (value) _permissions[2] |= (byte)8;}}
+            public bool Entering1stCode { get { return (_permissions[2] & 0x10) == 0x10; }set { if (value) _permissions[2] |= (byte)0x10; }}
+            public bool Entering2ndCode { get { return (_permissions[2] & 0x20) == 0x20; } set { if (value) _permissions[2] |= (byte)0x20;}}
+            public bool OutputsControl { get { return (_permissions[2] & 0x40) == 0x40; } set { if (value) _permissions[2] |= (byte)0x40;}}
+            public bool ClearingLatchedOutputs { get { return (_permissions[2] & 0x80) == 0x80; } set { if (value) _permissions[2] |= (byte)0x80;}}
             public UserPermissions(byte[] permissions)
             {
                 _permissions = permissions;
